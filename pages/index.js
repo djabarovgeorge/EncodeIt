@@ -1,131 +1,120 @@
-import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import { useState } from "react";
+import { encode, decode } from "./base62";
 
 export default function Home() {
+  const [key, setKey] = useState("");
+  const [mode, setMode] = useState("encode");
+  const [result, setResult] = useState("");
+
+  // Compute the result dynamically
+  const handleKeyChange = (e) => {
+    const newKey = e.target.value;
+    setKey(newKey);
+    setResult(mode === "encode" ? encode(newKey) : decode(newKey));
+  };
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    setResult(newMode === "encode" ? encode(key) : decode(key));
+  };
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={styles.container}>
+      <h1 style={styles.header}>Key Encoder/Decoder</h1>
+      <div style={styles.inputContainer}>
+        <label style={styles.label}>Enter Key:</label>
+        <input
+          type="text"
+          value={key}
+          onChange={handleKeyChange}
+          style={styles.input}
+          placeholder="Type here..."
+        />
+      </div>
+      <div style={styles.buttonContainer}>
+        <button
+          onClick={() => handleModeChange("encode")}
+          style={{
+            ...styles.button,
+            backgroundColor: mode === "encode" ? "#0070f3" : "#ccc",
+          }}
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className={styles.logo} />
-        </a>
-      </footer>
-
-      <style jsx>{`
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        footer img {
-          margin-left: 0.5rem;
-        }
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-        }
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family:
-            Menlo,
-            Monaco,
-            Lucida Console,
-            Liberation Mono,
-            DejaVu Sans Mono,
-            Bitstream Vera Sans Mono,
-            Courier New,
-            monospace;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family:
-            -apple-system,
-            BlinkMacSystemFont,
-            Segoe UI,
-            Roboto,
-            Oxygen,
-            Ubuntu,
-            Cantarell,
-            Fira Sans,
-            Droid Sans,
-            Helvetica Neue,
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
+          Encode
+        </button>
+        <button
+          onClick={() => handleModeChange("decode")}
+          style={{
+            ...styles.button,
+            backgroundColor: mode === "decode" ? "#0070f3" : "#ccc",
+          }}
+        >
+          Decode
+        </button>
+      </div>
+      <div style={styles.resultContainer}>
+        <h3 style={styles.resultLabel}>Result:</h3>
+        <p style={styles.result}>{result || "Your result will appear here."}</p>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    fontFamily: "Arial, sans-serif",
+    padding: "20px",
+    maxWidth: "500px",
+    margin: "50px auto",
+    border: "1px solid #ddd",
+    borderRadius: "8px",
+    backgroundColor: "#f9f9f9",
+  },
+  header: {
+    textAlign: "center",
+    marginBottom: "20px",
+    color: "#333",
+  },
+  inputContainer: {
+    marginBottom: "20px",
+  },
+  label: {
+    display: "block",
+    marginBottom: "8px",
+    color: "#555",
+  },
+  input: {
+    width: "100%",
+    padding: "8px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    outline: "none",
+  },
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "20px",
+  },
+  button: {
+    flex: 1,
+    margin: "0 5px",
+    padding: "10px",
+    fontSize: "16px",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  resultContainer: {
+    textAlign: "center",
+  },
+  resultLabel: {
+    marginBottom: "10px",
+    color: "#333",
+  },
+  result: {
+    fontSize: "18px",
+    color: "#0070f3",
+    wordWrap: "break-word",
+  },
+};

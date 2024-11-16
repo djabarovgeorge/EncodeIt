@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { encode, decode } from "./base62";
+import { encode, decode } from "../src/base62";
 
 export default function Home() {
   const [key, setKey] = useState("");
